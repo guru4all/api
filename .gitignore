@@ -49,3 +49,4 @@ Temporary Items
 system/*
 tests/*
 application/config/*
+sftp-config.json

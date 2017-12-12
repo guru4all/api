@@ -165,7 +165,7 @@ background-color: #f6f6f6;
 
       if($this->users_model->check_login($data)){
         $this->load->model('auth_model');
-        $this->users_model->token_get($data['user_email']);
+        $this->auth_model->token_get($data['user_email']);
       }
         $this->response('wrong login', 401);
     }

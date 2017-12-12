@@ -127,7 +127,7 @@ background-color: #f6f6f6;
 										We may need to send you critical information about our service and it is important that we have an accurate email address.
 									</td>
 								</tr><tr style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"><td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler" style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-										<a href="'.base_url('account_actions/activate/'.$data['user_activation_code']).'" class="btn-primary" itemprop="url" style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #348eda; margin: 0; border-color: #348eda; border-style: solid; border-width: 10px 20px;">Confirm email address</a>
+										<a href="http://localhost:8080/activate/'.$data["user_activation_code"].'" class="btn-primary" itemprop="url" style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 5px; text-transform: capitalize; background-color: #348eda; margin: 0; border-color: #348eda; border-style: solid; border-width: 10px 20px;">Confirm email address</a>
 									</td>
 								</tr><tr style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"><td class="content-block" style="font-family: \'Helvetica Neue\',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
 										&mdash; E-Support Team
@@ -147,6 +147,44 @@ background-color: #f6f6f6;
       exit();
     // if($this->email->send())
     //  return true;
+
+  }
+
+    function login_post(){
+
+    $data = $_POST = $this->post();
+
+    $this->form_validation->set_rules('user_email', 'Email', 'required|valid_email');
+    $this->form_validation->set_rules('user_password', 'Password', 'required|min_length[6]');
+
+    if ($this->form_validation->run() == FALSE) {
+        $this->response($this->form_validation->error_array(), 422);
+    }
+    else {
+      $this->load->model('users_model');
+
+      if($this->users_model->check_login($data)){
+        $this->load->model('auth_model');
+        $this->users_model->token_get($data['user_email']);
+      }
+        $this->response('wrong login', 401);
+    }
+
+  }
+
+  function activate_post(){
+    $data = $this->post();
+
+    $this->load->model('users_model');
+
+      if($user_id = $this->users_model->check_activation_code($data['user_activation_code'])){
+
+        if($this->users_model->enable_user($user_id))
+          $this->response('success', 200);
+        else
+          $this->response('already activated', 422);
+      }else
+        $this->response('error', 422);
 
   }
 

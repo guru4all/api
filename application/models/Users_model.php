@@ -55,7 +55,7 @@ class Users_model extends CI_Model{
     {
       $hashed_password = $query->row()->user_password;
 
-      if(password_verify ($data['user_password'] , $hashed_password ))
+      if(password_verify ($data['user_password'], $hashed_password ))
         return true;
       else
         return false;

@@ -142,11 +142,11 @@ background-color: #f6f6f6;
 ';
     $this->email->message($mail_body);
 
-      $this->email->send(FALSE);
+      /*$this->email->send(FALSE);
       echo   $this->email->print_debugger();
-      exit();
-    // if($this->email->send())
-    //  return true;
+      exit();*/
+    if($this->email->send())
+      return true;
 
   }
 
@@ -165,8 +165,9 @@ background-color: #f6f6f6;
 
       if($this->users_model->check_login($data)){
         $this->load->model('auth_model');
-        $this->auth_model->token_get($data['user_email']);
+        $this->response(($this->auth_model->token_get($data['user_email']), 200);
       }
+      else
         $this->response('wrong login', 401);
     }
 

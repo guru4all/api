@@ -13,7 +13,7 @@ class Auth_model extends CI_Model{
     $tokenData = array();
     $tokenData['id'] = time().$user_email; 
     $output['token'] = AUTHORIZATION::generateToken($tokenData);
-    $this->set_response($output, REST_Controller::HTTP_OK);
+    return $output;
   }
 
   function token_post()
@@ -23,14 +23,9 @@ class Auth_model extends CI_Model{
         if (array_key_exists('Authorization', $headers) && !empty($headers['Authorization'])) {
             $decodedToken = AUTHORIZATION::validateToken($headers['Authorization']);
             if ($decodedToken != false) {
-                $this->set_response($decodedToken, REST_Controller::HTTP_OK);
-                return;
+              return $decodedToken;
             }
         }
-
-        $this->set_response("Unauthorised", REST_Controller::HTTP_UNAUTHORIZED);
+        return "Unauthorised";
     }
-
-  
-
 }

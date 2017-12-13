@@ -23,11 +23,16 @@ class Auth extends REST_Controller
      * URL: http://localhost/CodeIgniter-JWT-Sample/auth/token
      * Method: GET
      */
-    $this->load->model('auth_model');
-
-    public function token_get($user_email)
+    public function __construct()
     {
-        $this->users_model->token_get($user_email);
+        parent::__construct();
+        $this->load->model('auth_model');
+    }
+
+    public function token_get($user_email = null)
+    {
+        $output = $this->auth_model->token_get($user_email);
+        $this->set_response($output, REST_Controller::HTTP_OK);
     }
 
     /**
@@ -38,6 +43,11 @@ class Auth extends REST_Controller
      */
     public function token_post()
     {
-        $this->users_model->token_post();
+        $decodedToken = $this->auth_model->token_post();
+
+        if($decodedToken == "Unauthorised")
+            $this->set_response("Unauthorised", REST_Controller::HTTP_UNAUTHORIZED);
+        else
+            $this->set_response($decodedToken, REST_Controller::HTTP_OK);        
     }
 }

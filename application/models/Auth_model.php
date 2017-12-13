@@ -9,9 +9,19 @@ class Auth_model extends CI_Model{
     //Codeigniter : Write Less Do More
   }
 
-  function token_get($user_email){
-    $tokenData = array();
-    $tokenData['id'] = time().$user_email; 
+  function token_get($user_data){
+
+    $tokenData = array(
+      "user_id" => $user_data['user_id'],
+      "user_first_name" => $user_data['user_first_name'],
+      "user_last_name" => $user_data['user_last_name'],
+      "user_full_name" => $user_data['user_first_name'].' '.$user_data['user_last_name'],
+      "user_geo_location" => $user_data['user_geo_location'],
+      "user_office" => $user_data['user_office'],
+      "user_email" => $user_data['user_email'],
+      "expire" => time()+3600
+    );
+
     $output['token'] = AUTHORIZATION::generateToken($tokenData);
     return $output;
   }
@@ -21,11 +31,14 @@ class Auth_model extends CI_Model{
         $headers = $this->input->request_headers();
 
         if (array_key_exists('Authorization', $headers) && !empty($headers['Authorization'])) {
-            $decodedToken = AUTHORIZATION::validateToken($headers['Authorization']);
-            if ($decodedToken != false) {
+            $the_token = json_decode($headers['Authorization']);
+
+            $decodedToken = AUTHORIZATION::validateToken($the_token->token);
+            if ($decodedToken->expire > time()) {
               return $decodedToken;
             }
         }
         return "Unauthorised";
+       
     }
 }

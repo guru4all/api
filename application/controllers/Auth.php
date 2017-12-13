@@ -29,9 +29,9 @@ class Auth extends REST_Controller
         $this->load->model('auth_model');
     }
 
-    public function token_get($user_email = null)
+    public function token_get($user_data = null)
     {
-        $output = $this->auth_model->token_get($user_email);
+        $output = $this->auth_model->token_get($user_data);
         $this->set_response($output, REST_Controller::HTTP_OK);
     }
 
